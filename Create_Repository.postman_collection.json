@@ -98,11 +98,16 @@
 			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{token}}",
+							"key": "accessToken",
+							"value": "ceb0023f619829f4839dbfb57d3056534afb89a3",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -150,7 +155,7 @@
 						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
 						"exec": [
 							"pm.test(\"Verify POST request returns duplicate error | Status code: \" + pm.response.code, function () {",
-							"    pm.expect(pm.response.code).to.eql(422)",
+							"    pm.expect(pm.response.code).to.eql(422);",
 							"});",
 							"",
 							"if (pm.response.code === 422){",
@@ -171,6 +176,9 @@
 							"    });",
 							"    ",
 							"",
+							"}else if(pm.response.code === 201){",
+							"        pm.test(\"Repository is created successfully | Status Code: \" + pm.response.code);",
+							"        ",
 							"}else{",
 							"    var jsonData = pm.response.json();",
 							"    pm.test(\"POST request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.errors[0].message);",
@@ -182,11 +190,16 @@
 			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{token}}",
+							"key": "accessToken",
+							"value": "ceb0023f619829f4839dbfb57d3056534afb89a3",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -234,7 +247,7 @@
 						"id": "4fc6abd7-e338-4662-86fc-0bc62ef91ac2",
 						"exec": [
 							"if (pm.response.code === 204){",
-							"    pm.test(\"Verify Status code is 204 \" + pm.response.code, function () {",
+							"    pm.test(\"Verify DELETE request is successful \" + pm.response.code, function () {",
 							"        pm.response.to.have.status(204);",
 							"    });",
 							"    ",
@@ -249,11 +262,16 @@
 			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{token}}",
+							"key": "accessToken",
+							"value": "ceb0023f619829f4839dbfb57d3056534afb89a3",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
 							"type": "string"
 						}
 					]
