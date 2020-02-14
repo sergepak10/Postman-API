@@ -163,7 +163,7 @@
 							"        pm.expect(jsonData.message).to.eql(\"Repository creation failed.\");",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify errors\", function () {",
+							"    pm.test(\"Verify errors values are correct\", function () {",
 							"        pm.expect(jsonData.errors[0].resource).to.eql(\"Repository\");",
 							"        pm.expect(jsonData.errors[0].code).to.eql(\"custom\");",
 							"        pm.expect(jsonData.errors[0].field).to.eql(\"name\");",
