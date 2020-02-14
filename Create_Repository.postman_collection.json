@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "2de5fd00-6c89-48fb-b752-3852feb59e90",
+		"name": "Create_Repository",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GitHub API Post Repository",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
+						"exec": [
+							"pm.test(\"Verify that POST request is successful\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202])",
+							"});",
+							"",
+							"if (pm.response.code === 201){",
+							"    pm.test(\"Verify Header - Content-Type is present\", function () {",
+							"        pm.response.to.have.header(\"Content-Type\");",
+							"    });",
+							"",
+							"    pm.test(\"Verify response is JSON and a body exists\", function () {",
+							"        pm.response.to.be.json;",
+							"    });",
+							"    ",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"Verify objects are present\", function () {",
+							"        pm.expect(jsonData).to.have.property(\"id\");",
+							"        pm.expect(jsonData).to.have.property(\"node_id\");",
+							"        pm.expect(jsonData).to.have.property(\"name\");",
+							"        pm.expect(jsonData).to.have.property(\"full_name\");",
+							"        pm.expect(jsonData).to.have.property(\"private\");",
+							"        pm.expect(jsonData).to.have.property(\"owner\");",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify ID is populated\", function () {",
+							"        //pm.expect(jsonData.id).not.eql(null);",
+							"        pm.expect(jsonData.id).to.be.a(\"number\");",
+							"        pm.expect(jsonData.id).to.be.above(0);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify node_id is populated\", function () {",
+							"        pm.expect(jsonData.node_id).not.eql(null);",
+							"        pm.expect(jsonData.node_id).to.be.a(\"string\");",
+							"    });",
+							"    ",
+							"    ",
+							"    pm.test(\"Verify name is correct\", function () {",
+							"        var vname = pm.environment.get(\"name\");",
+							"        pm.expect(jsonData.name).to.eql(vname);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify full_name is correct\", function () {",
+							"        var vname = pm.environment.get(\"name\");",
+							"        var vlogin = pm.environment.get(\"login\");",
+							"        pm.expect(jsonData.full_name).to.eql(vlogin + '/' + vname);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify owner: login is correct\", function () {",
+							"        var vlogin = pm.environment.get(\"login\");",
+							"        pm.expect(jsonData.owner.login).to.eql(vlogin);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify owner: id is populated\", function () {",
+							"        pm.expect(jsonData.owner.id).to.be.a(\"number\");",
+							"        pm.expect(jsonData.owner.id).to.be.above(0);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify owner: node_id is populated\", function () {",
+							"        pm.expect(jsonData.node_id).not.eql(null);",
+							"        pm.expect(jsonData.node_id).to.be.a(\"string\");",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify owner: url is correct\", function () {",
+							"        var vurl = pm.environment.get(\"url\");",
+							"        var vlogin = pm.environment.get(\"login\");",
+							"        pm.expect(jsonData.owner.url).to.eql(vurl + 'users/' + vlogin);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify permissions\", function () {",
+							"        pm.expect(jsonData.permissions.admin).to.eql(true);",
+							"        pm.expect(jsonData.permissions.push).to.eql(true);",
+							"        pm.expect(jsonData.permissions.pull).to.eql(true);",
+							"    });",
+							"",
+							"}else{",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"POST request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.errors[0].message);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.github.com/user/repos",
+					"protocol": "https",
+					"host": [
+						"api",
+						"github",
+						"com"
+					],
+					"path": [
+						"user",
+						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitHub API Post Dup Repository",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
+						"exec": [
+							"pm.test(\"Verify that POST request returns duplicate error | Status code: \" + pm.response.code, function () {",
+							"    pm.expect(pm.response.code).to.eql(422)",
+							"});",
+							"",
+							"if (pm.response.code === 422){",
+							"    pm.test(\"Verify Header - Content-Type is present\", function () {",
+							"        pm.response.to.have.header(\"Content-Type\");",
+							"    });",
+							"    ",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"Verify message is correct\", function () {",
+							"        pm.expect(jsonData.message).to.eql(\"Repository creation failed.\");",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify errors\", function () {",
+							"        pm.expect(jsonData.errors[0].resource).to.eql(\"Repository\");",
+							"        pm.expect(jsonData.errors[0].code).to.eql(\"custom\");",
+							"        pm.expect(jsonData.errors[0].field).to.eql(\"name\");",
+							"        pm.expect(jsonData.errors[0].message).to.eql(\"name already exists on this account\");",
+							"    });",
+							"    ",
+							"",
+							"}else{",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"POST request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.errors[0].message);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.github.com/user/repos",
+					"protocol": "https",
+					"host": [
+						"api",
+						"github",
+						"com"
+					],
+					"path": [
+						"user",
+						"repos"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
