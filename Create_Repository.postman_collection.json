@@ -13,7 +13,7 @@
 					"script": {
 						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
 						"exec": [
-							"pm.test(\"Verify that POST request is successful\", function () {",
+							"pm.test(\"Verify POST request is successful\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([201,202])",
 							"});",
 							"",
@@ -142,14 +142,14 @@
 			"response": []
 		},
 		{
-			"name": "GitHub API Post Dup Repository",
+			"name": "GitHub API Duplicate Repository",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
 						"exec": [
-							"pm.test(\"Verify that POST request returns duplicate error | Status code: \" + pm.response.code, function () {",
+							"pm.test(\"Verify POST request returns duplicate error | Status code: \" + pm.response.code, function () {",
 							"    pm.expect(pm.response.code).to.eql(422)",
 							"});",
 							"",
@@ -163,7 +163,7 @@
 							"        pm.expect(jsonData.message).to.eql(\"Repository creation failed.\");",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify errors values are correct\", function () {",
+							"    pm.test(\"Verify errors object has correct keys and values\", function () {",
 							"        pm.expect(jsonData.errors[0].resource).to.eql(\"Repository\");",
 							"        pm.expect(jsonData.errors[0].code).to.eql(\"custom\");",
 							"        pm.expect(jsonData.errors[0].field).to.eql(\"name\");",
@@ -220,6 +220,74 @@
 					"path": [
 						"user",
 						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GitHub API Delete Repository",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fc6abd7-e338-4662-86fc-0bc62ef91ac2",
+						"exec": [
+							"if (pm.response.code === 204){",
+							"    pm.test(\"Verify Status code is 204 \" + pm.response.code, function () {",
+							"        pm.response.to.have.status(204);",
+							"    });",
+							"    ",
+							"}else{",
+							"    var jsonData = pm.response.json();",
+							"    pm.test(\"DELETE request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.message);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.github.com/repos/{{login}}/{{name}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"github",
+						"com"
+					],
+					"path": [
+						"repos",
+						"{{login}}",
+						"{{name}}"
 					]
 				}
 			},
