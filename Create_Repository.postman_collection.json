@@ -13,21 +13,17 @@
 					"script": {
 						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
 						"exec": [
-							"pm.test(\"Verify POST request is successful\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([201,202])",
+							"pm.test(\"Verify POST request is successful\", () => {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201],[202]);",
 							"});",
 							"",
 							"if (pm.response.code === 201){",
-							"    pm.test(\"Verify Header - Content-Type is present\", function () {",
-							"        pm.response.to.have.header(\"Content-Type\");",
-							"    });",
+							"    pm.test(\"Verify Header - Content-Type is present\", () => pm.response.to.have.header(\"Content-Type\"));",
+							"    pm.test(\"Verify response is JSON and a body exists\", () => pm.response.to.be.json);",
 							"",
-							"    pm.test(\"Verify response is JSON and a body exists\", function () {",
-							"        pm.response.to.be.json;",
-							"    });",
+							"    const jsonData = pm.response.json();",
 							"    ",
-							"    var jsonData = pm.response.json();",
-							"    pm.test(\"Verify objects are present\", function () {",
+							"    pm.test(\"Verify objects are present\", () => {",
 							"        pm.expect(jsonData).to.have.property(\"id\");",
 							"        pm.expect(jsonData).to.have.property(\"node_id\");",
 							"        pm.expect(jsonData).to.have.property(\"name\");",
@@ -36,58 +32,76 @@
 							"        pm.expect(jsonData).to.have.property(\"owner\");",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify ID is populated\", function () {",
-							"        //pm.expect(jsonData.id).not.eql(null);",
+							"    pm.test(\"Verify ID is populated\", () => {",
 							"        pm.expect(jsonData.id).to.be.a(\"number\");",
 							"        pm.expect(jsonData.id).to.be.above(0);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify node_id is populated\", function () {",
+							"    pm.test(\"Verify node_id is populated\", () => {",
 							"        pm.expect(jsonData.node_id).not.eql(null);",
 							"        pm.expect(jsonData.node_id).to.be.a(\"string\");",
 							"    });",
 							"    ",
-							"    ",
-							"    pm.test(\"Verify name is correct\", function () {",
-							"        var vname = pm.environment.get(\"name\");",
+							"    pm.test(\"Verify name is correct\", () => {",
+							"        const vname = pm.environment.get(\"name\");",
 							"        pm.expect(jsonData.name).to.eql(vname);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify full_name is correct\", function () {",
-							"        var vname = pm.environment.get(\"name\");",
-							"        var vlogin = pm.environment.get(\"login\");",
+							"    pm.test(\"Verify full_name is correct\", () => {",
+							"        const vname = pm.environment.get(\"name\");",
+							"        const vlogin = pm.environment.get(\"login\");",
 							"        pm.expect(jsonData.full_name).to.eql(vlogin + '/' + vname);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify owner: login is correct\", function () {",
-							"        var vlogin = pm.environment.get(\"login\");",
+							"    pm.test(\"Verify private is populated\", () => pm.expect(jsonData.private).to.eql(false));",
+							"    ",
+							"    pm.test(\"Verify owner ['login'] is correct\", () => {",
+							"        const vlogin = pm.environment.get(\"login\");",
 							"        pm.expect(jsonData.owner.login).to.eql(vlogin);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify owner: id is populated\", function () {",
+							"    pm.test(\"Verify owner ['id'] is populated\", () => {",
 							"        pm.expect(jsonData.owner.id).to.be.a(\"number\");",
 							"        pm.expect(jsonData.owner.id).to.be.above(0);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify owner: node_id is populated\", function () {",
+							"    pm.test(\"Verify owner ['node_id'] is populated\", () => {",
 							"        pm.expect(jsonData.node_id).not.eql(null);",
 							"        pm.expect(jsonData.node_id).to.be.a(\"string\");",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify owner: url is correct\", function () {",
-							"        var vurl = pm.environment.get(\"url\");",
-							"        var vlogin = pm.environment.get(\"login\");",
+							"    pm.test(\"Verify owner ['url'] is correct\", () => {",
+							"        const vurl = pm.environment.get(\"url\");",
+							"        const vlogin = pm.environment.get(\"login\");",
 							"        pm.expect(jsonData.owner.url).to.eql(vurl + 'users/' + vlogin);",
 							"    });",
 							"    ",
-							"    pm.test(\"Verify permissions\", function () {",
+							"    pm.test(\"Verify owner ['html_url'] is correct\", () => {",
+							"        const vhtml_url = pm.environment.get(\"html_url\");",
+							"        const vlogin = pm.environment.get(\"login\");",
+							"        pm.expect(jsonData.owner.html_url).to.eql(vhtml_url + vlogin);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify html_url is correct\", () => {",
+							"        const vhtml_url = pm.environment.get(\"html_url\");",
+							"        const vname = pm.environment.get(\"name\");",
+							"        const vlogin = pm.environment.get(\"login\");",
+							"        pm.expect(jsonData.html_url).to.eql(vhtml_url + vlogin + '/' + vname);",
+							"    });",
+							"    ",
+							"     pm.test(\"Verify description is correct\", () => {",
+							"        const vdescription = pm.variables.get(\"description\");",
+							"        pm.expect(jsonData.description).to.eql(vdescription);",
+							"    });",
+							"    ",
+							"    pm.test(\"Verify permissions\", () => {",
 							"        pm.expect(jsonData.permissions.admin).to.eql(true);",
 							"        pm.expect(jsonData.permissions.push).to.eql(true);",
 							"        pm.expect(jsonData.permissions.pull).to.eql(true);",
 							"    });",
 							"",
 							"}else{",
-							"    var jsonData = pm.response.json();",
+							"    const jsonData = pm.response.json();",
 							"    pm.test(\"POST request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.errors[0].message);",
 							"}",
 							""
@@ -123,7 +137,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}\r\n",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -154,21 +168,18 @@
 					"script": {
 						"id": "47ccee74-32c0-4d1c-a83c-d7f96c9a9023",
 						"exec": [
-							"pm.test(\"Verify POST request returns duplicate error | Status code: \" + pm.response.code, function () {",
-							"    pm.expect(pm.response.code).to.eql(422);",
-							"});",
+							"pm.test(\"Verify POST request returns duplicate error | Status code: \" + pm.response.code, () => pm.response.to.have.status(422));",
+							"//});",
 							"",
 							"if (pm.response.code === 422){",
-							"    pm.test(\"Verify Header - Content-Type is present\", function () {",
-							"        pm.response.to.have.header(\"Content-Type\");",
-							"    });",
+							"    pm.test(\"Verify Header - Content-Type is present\", () => pm.response.to.have.header(\"Content-Type\"));",
 							"    ",
-							"    var jsonData = pm.response.json();",
-							"    pm.test(\"Verify message is correct\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.test(\"Verify message is correct\", () => {",
 							"        pm.expect(jsonData.message).to.eql(\"Repository creation failed.\");",
-							"    });",
+							"    });    ",
 							"    ",
-							"    pm.test(\"Verify errors object has correct keys and values\", function () {",
+							"    pm.test(\"Verify errors object has correct keys and values\", () => {",
 							"        pm.expect(jsonData.errors[0].resource).to.eql(\"Repository\");",
 							"        pm.expect(jsonData.errors[0].code).to.eql(\"custom\");",
 							"        pm.expect(jsonData.errors[0].field).to.eql(\"name\");",
@@ -180,7 +191,7 @@
 							"        pm.test(\"Repository is created successfully | Status Code: \" + pm.response.code);",
 							"        ",
 							"}else{",
-							"    var jsonData = pm.response.json();",
+							"    const jsonData = pm.response.json();",
 							"    pm.test(\"POST request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.errors[0].message);",
 							"}"
 						],
@@ -215,7 +226,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -246,15 +257,13 @@
 					"script": {
 						"id": "4fc6abd7-e338-4662-86fc-0bc62ef91ac2",
 						"exec": [
-							"if (pm.response.code === 204){",
-							"    pm.test(\"Verify DELETE request is successful \" + pm.response.code, function () {",
-							"        pm.response.to.have.status(204);",
-							"    });",
-							"    ",
-							"}else{",
-							"    var jsonData = pm.response.json();",
-							"    pm.test(\"DELETE request failed | Status Code: \" + pm.response.code + \" - \" + jsonData.message);",
-							"}"
+							"const jsonData = pm.response.json();",
+							"pm.test(\"Verify DELETE request status |\" + pm.response.code, () => pm.response.to.have.status(204));",
+							"",
+							"if (pm.response.code !== 204){",
+							"    const jsonData = pm.response.json();",
+							"    pm.test(\"DELETE failed with the error message: \" + jsonData.message);",
+							"}    "
 						],
 						"type": "text/javascript"
 					}
@@ -287,7 +296,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"This is API repository\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
+					"raw": "{\r\n  \"name\": \"{{name}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"homepage\": \"https://github.com\",\r\n  \"private\": false,\r\n  \"has_issues\": true,\r\n  \"has_projects\": true,\r\n  \"has_wiki\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -310,6 +319,36 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e72c5f0d-93a2-4b29-ba60-afcfd18de55d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ec9abc76-7664-4b68-909b-e0e0dc33bb92",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "5962eea0-0243-4a09-99eb-d906523f24a1",
+			"key": "description",
+			"value": "",
+			"type": "string"
 		}
 	],
 	"protocolProfileBehavior": {}
